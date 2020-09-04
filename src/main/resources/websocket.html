@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>webSocketTest客户端</title>
+</head>
+
+<body>
+
+<h4>客户端输入：</h4>
+<textarea id = "message" name="message" style="width: 200px;height: 100px"></textarea>
+<br/>
+<input type="button" value="发送到服务器" onclick="sendMessage()" />
+
+
+<h4>服务器返回消息：</h4>
+<textarea id = "responseText" name="message" style="width: 1100px;height: 100px"></textarea>
+<br/>
+<input type="button" οnclick="javascript:document.getElementById('responseText').value=''" value="clear data">
+<script type="text/javascript">
+    function send(){
+        alert(2);
+    }
+    var webSocket;
+    if(window.WebSocket){
+        webSocket = new WebSocket("ws://127.0.0.1:8899/ws");
+        //客户端收到服务器的方法，这个方法就会被回调
+        webSocket.onmessage = function (ev) {
+
+            var contents = document.getElementById("responseText");
+            contents.value = contents.value +"\n"+ ev.data;
+        }
+
+        webSocket.onopen = function (ev) {
+            var contents = document.getElementById("responseText");
+            contents.value = "与服务器端的websocket连接建立";
+
+            var data = '{"method":"init","identifier":"11VKF7M0020199"}';
+
+            webSocket.send(data);
+        }
+        webSocket.onclose = function (ev) {
+
+            var contents = document.getElementById("responseText");
+            contents.value =  contents.value +"\n"+ "与服务器端的websocket连接断开";
+        }
+    }else{
+        alert("该环境不支持websocket")
+    }
+
+    function sendMessage() {
+        //alert(document.getElementById("message").value);
+        if(window.webSocket){
+            if(webSocket.readyState == WebSocket.OPEN){
+                var data2 = '{"method":"video","serialNumber":"yjdp"}';
+                var data= '{"method":"video","identifier":"11VKF7M0020199","toIdentifier":"yjdp","status":"'+document.getElementById("message").value+'","url":"http://127.0.0.1:8081/UAV_FILES/FILES/0UYKG7K002001F.mp4"}';
+                webSocket.send(data);
+            }else{
+                alert("与服务器连接尚未建立")
+            }
+        }
+    }
+
+
+</script>
+</body>
+</html>
